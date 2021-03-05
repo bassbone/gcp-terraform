@@ -9,15 +9,15 @@ variable "cpu" {
 }
 
 variable "memory" {
-  default = "1024"
+  default = "4096"
 }
 
 variable "zone" {
-  default = "asia-northeast1-b"
+  default = "asia-northeast1-a"
 }
 
 variable "disk_size" {
-  default = 10
+  default = 20
 }
 
 variable "disk_image" {
@@ -40,6 +40,20 @@ resource "google_compute_instance" "default" {
   network_interface {
     network = "default"
     access_config {}
+  }
+
+  guest_accelerator {
+    type = "nvidia-tesla-t4"
+    count = 1
+  }
+
+  scheduling {
+    automatic_restart = false
+    on_host_maintenance = "TERMINATE"
+  }
+
+  metadata = {
+    install-nvidia-driver = "True"
   }
 
   allow_stopping_for_update = true
